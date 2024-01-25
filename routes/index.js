@@ -7,7 +7,7 @@ router.use("/users", usersRouter);
 router.use("/cards", cardsRouter);
 
 router.use("*", (req, res) => {
-  res.status(NOT_FOUND).send("Сервер не найдет");
+  res.status(NOT_FOUND).send({ message: "Сервер не найдет" });
 });
 
 module.exports = router;

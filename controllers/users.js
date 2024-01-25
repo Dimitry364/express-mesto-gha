@@ -54,8 +54,8 @@ const updateProfile = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { new: true, runValidators: true },
-    { name, about }
+    { name, about },
+    { new: true, runValidators: true }
   )
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
@@ -80,8 +80,8 @@ const updateAvatar = (req, res) => {
 
   User.findByIdAndUpdate(
     req.user._id,
-    { new: true, runValidators: true },
-    { avatar }
+    { avatar },
+    { new: true, runValidators: true }
   )
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
