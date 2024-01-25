@@ -16,7 +16,7 @@ const getUser = (req, res) => {
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "CastError" || err.name === "ValidationError") {
         res
           .status(BAD_REQUEST)
           .send({ message: "Переданы некорректные данные" });
@@ -37,7 +37,7 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === "CastError" || err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({
           message: "Переданы некорректные данные при создании пользователя",
         });
@@ -60,7 +60,7 @@ const updateProfile = (req, res) => {
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "CastError" || err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({
           message: "Переданы некорректные данные при обновлении профиля",
         });
@@ -86,7 +86,7 @@ const updateAvatar = (req, res) => {
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "CastError" || err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({
           message: "Переданы некорректные данные при обновлении автар",
         });
