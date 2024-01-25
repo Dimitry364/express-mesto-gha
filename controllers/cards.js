@@ -17,15 +17,11 @@ const createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(BAD_REQUEST)
-          .send({
-            message: "Переданы некорректные данные при создании карточки",
-          });
+        res.status(BAD_REQUEST).send({
+          message: "Переданы некорректные данные при создании карточки",
+        });
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "На сервере произошла ошибка" });
+        res.status(SERVER_ERROR).send({ message: "Внутренняя ошибка сервера" });
       }
     });
 };
@@ -33,7 +29,7 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
+  Card.findByIdAndDelete(cardId)
     .orFail(() => new Error("Not Found"))
     .then((card) => res.send({ data: card }))
     .catch((err) => {

@@ -43,9 +43,7 @@ const createUser = (req, res) => {
         });
         return;
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "На сервере произошла ошибка" });
+        res.status(SERVER_ERROR).send({ message: "Внутренняя ошибка сервера" });
         return;
       }
     });
@@ -54,8 +52,12 @@ const createUser = (req, res) => {
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about })
-    .orFail(() => new Error("NotFound"))
+  User.findByIdAndUpdate(
+    req.user._id,
+    { new: true, runValidators: true },
+    { name, about }
+  )
+    .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -76,8 +78,12 @@ const updateProfile = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar })
-    .orFail(() => new Error("NotFound"))
+  User.findByIdAndUpdate(
+    req.user._id,
+    { new: true, runValidators: true },
+    { avatar }
+  )
+    .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
