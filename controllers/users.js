@@ -14,7 +14,7 @@ const getUser = (req, res) => {
 
   User.findById(userId)
     .orFail(() => new Error("Not Found"))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
         res
@@ -35,7 +35,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({
@@ -59,9 +59,9 @@ function updateAvatar(req) {
   return { avatar };
 }
 
-function updateUserDecorator(func) {
+function updateUserDecorator(update) {
   return function (req, res) {
-    User.findByIdAndUpdate(req.user._id, func(req), {
+    User.findByIdAndUpdate(req.user._id, update(req), {
       new: true,
       runValidators: true,
     })
