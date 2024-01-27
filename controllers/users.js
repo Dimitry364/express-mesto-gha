@@ -1,4 +1,7 @@
 const User = require("../models/user");
+const mongoose = require("mongoose");
+const ValidationError = mongoose.Error.ValidationError;
+const CastError = mongoose.Error.CastError;
 const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/error");
 
 const getUsers = (req, res) => {
@@ -16,7 +19,7 @@ const getUser = (req, res) => {
     .orFail(() => new Error("Not Found"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err instanceof CastError) {
         res
           .status(BAD_REQUEST)
           .send({ message: "Переданы некорректные данные" });
@@ -37,7 +40,7 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST).send({
           message: "Переданы некорректные данные при создании пользователя",
         });
@@ -68,7 +71,7 @@ function updateUserDecorator(update) {
       .orFail(() => new Error("Not Found"))
       .then((user) => res.send({ data: user }))
       .catch((err) => {
-        if (err.name === "ValidationError") {
+        if (err instanceof ValidationError) {
           res.status(BAD_REQUEST).send({
             message:
               "Переданы некорректные данные при обновлении профиля или аватар",
