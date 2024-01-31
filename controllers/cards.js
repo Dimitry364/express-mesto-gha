@@ -39,8 +39,7 @@ const deleteCard = (req, res, next) => {
       return card;
     })
     .then((card) => {
-      card.deleteOne();
-      return card;
+      return card.deleteOne();
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
