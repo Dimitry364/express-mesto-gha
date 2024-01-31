@@ -27,8 +27,7 @@ const login = (req, res) => {
         .end();
     })
     .catch((err) => {
-      //TODO Check this
-      throw new AuthError(err.message);
+      next(new AuthError(err.message));
     });
 };
 
@@ -51,7 +50,7 @@ const getUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof CastError)
-        throw new BadRequestError("Переданы некорректные данные");
+        next(new BadRequestError("Переданы некорректные данные"));
       else
         next(err);
     });
@@ -67,9 +66,9 @@ const createUser = (req, res, next) => {
         .then((user) => res.status(201).send({ data: user }))
         .catch((err) => {
           if (err instanceof ValidationError)
-            throw new BadRequestError("Переданы некорректные данные при создании пользователя");
+            next(new BadRequestError("Переданы некорректные данные при создании пользователя"));
           else if (err.code === 11000)
-            throw new ConflictError("Пользователь с таким email уже зарегестрирован");
+            next(new ConflictError("Пользователь с таким email уже зарегестрирован"));
           else
             next(err);
         })
@@ -96,7 +95,7 @@ function updateUserDecorator(update) {
       .then((user) => res.send({ data: user }))
       .catch((err) => {
         if (err instanceof ValidationError)
-          throw new BadRequestError("Переданы некорректные данные при обновлении профиля или аватар");
+          next(new BadRequestError("Переданы некорректные данные при обновлении профиля или аватар"));
         else
           next(err);
       });

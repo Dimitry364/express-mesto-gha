@@ -19,7 +19,7 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err instanceof ValidationError)
-        throw new BadRequestError("Переданы некорректные данные при создании карточки");
+        next(new BadRequestError("Переданы некорректные данные при создании карточки"));
       else
         next(err);
     });
@@ -44,7 +44,7 @@ const deleteCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof CastError)
-        throw new BadRequestError("Переданы некорректные данные при удалении карточки");
+        next(new BadRequestError("Переданы некорректные данные при удалении карточки"));
       else
         next(err);
     });
@@ -63,7 +63,7 @@ const likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof CastError)
-        throw new BadRequestError("Переданы некорректные данные постановки лайка");
+        next(new BadRequestError("Переданы некорректные данные постановки лайка"));
       else
         next(err);
     });
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof CastError)
-        throw new BadRequestError("Переданы некорректные данные для снятия лайка");
+        next(new BadRequestError("Переданы некорректные данные для снятия лайка"));
       else
         next(err);
     });
