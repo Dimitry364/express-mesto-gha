@@ -3,6 +3,7 @@ const CastError = mongoose.Error.CastError;
 const ValidationError = mongoose.Error.ValidationError;
 const Card = require("../models/card");
 const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
 const BadRequestError = require("../errors/BadRequestError");
 
 const getCards = (req, res, next) => {

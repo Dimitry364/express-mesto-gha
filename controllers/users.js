@@ -24,7 +24,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .end();
+        .send({data: user});
     })
     .catch((err) => {
       next(new AuthError(err.message));
