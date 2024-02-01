@@ -8,15 +8,22 @@ const AuthError = require("../errors/AuthError");
 const ConflictError = require("../errors/ConflictError");
 const NotFoundError = require("../errors/NotFoundError");
 const BadRequestError = require("../errors/BadRequestError");
+const { jwtKey } = require("../utils/jwtKey");
+const { Created } = require("../utils/statusCode");
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, "some-secret-key", {
-        expiresIn: "7d",
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === "production" ? JWT_SECRET : jwtKey,
+        {
+          expiresIn: "7d",
+        }
+      );
 
       res
         .cookie("jwt", token, {
@@ -24,7 +31,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send({data: user});
+        .send({ data: user });
     })
     .catch((err) => {
       next(new AuthError(err.message));
@@ -40,7 +47,7 @@ const getUsers = (req, res, next) => {
 const getCurrentUser = (req, res) => {
   req.params.userId = req.user._id;
   getUser(req, res);
-}
+};
 
 const getUser = (req, res, next) => {
   const { userId } = req.params;
@@ -51,28 +58,30 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err instanceof CastError)
         next(new BadRequestError("Переданы некорректные данные"));
-      else
-        next(err);
+      else next(err);
     });
 };
 
 const createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
 
-  bcrypt
-    .hash(password, 10)
-    .then((hash) =>
-      User.create({ name, about, avatar, email, password: hash })
-        .then((user) => res.status(201).send({ data: user }))
-        .catch((err) => {
-          if (err instanceof ValidationError)
-            next(new BadRequestError("Переданы некорректные данные при создании пользователя"));
-          else if (err.code === 11000)
-            next(new ConflictError("Пользователь с таким email уже зарегестрирован"));
-          else
-            next(err);
-        })
-    );
+  bcrypt.hash(password, 10).then((hash) =>
+    User.create({ name, about, avatar, email, password: hash })
+      .then((user) => res.status(Created).send({ data: user }))
+      .catch((err) => {
+        if (err instanceof ValidationError)
+          next(
+            new BadRequestError(
+              "Переданы некорректные данные при создании пользователя"
+            )
+          );
+        else if (err.code === 11000)
+          next(
+            new ConflictError("Пользователь с таким email уже зарегестрирован")
+          );
+        else next(err);
+      })
+  );
 };
 
 function updateProfile(req) {
@@ -95,9 +104,12 @@ function updateUserDecorator(update) {
       .then((user) => res.send({ data: user }))
       .catch((err) => {
         if (err instanceof ValidationError)
-          next(new BadRequestError("Переданы некорректные данные при обновлении профиля или аватар"));
-        else
-          next(err);
+          next(
+            new BadRequestError(
+              "Переданы некорректные данные при обновлении профиля или аватар"
+            )
+          );
+        else next(err);
       });
   };
 }
