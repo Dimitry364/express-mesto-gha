@@ -8,8 +8,9 @@ const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
 const errorHandler = require("./middlewares/errorHandler");
 const { loginValidator, userValidator } = require("./middlewares/validation");
+const mongodb = require("./utils/mongodb");
 
-const { PORT = 3000, DB_CONN } = process.env;
+const { PORT = 3000, DB_CONN = mongodb } = process.env;
 const app = express();
 
 app.use(cookieParser());
