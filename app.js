@@ -9,9 +9,12 @@ const auth = require("./middlewares/auth");
 const errorHandler = require("./middlewares/errorHandler");
 const { loginValidator, userValidator } = require("./middlewares/validation");
 const { mongodb } = require("./utils/mongodb");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { PORT = 3000, DB_CONN = mongodb } = process.env;
 const app = express();
+
+app.use(requestLogger);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -21,6 +24,8 @@ app.post("/signup", userValidator, createUser);
 
 app.use(auth);
 app.use(routes);
+
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
