@@ -10,6 +10,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const { loginValidator, userValidator } = require("./middlewares/validation");
 const { mongodb } = require("./utils/mongodb");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const cors = require("./middlewares/cors");
 
 const { PORT = 3000, DB_CONN = mongodb } = process.env;
 const app = express();
@@ -18,6 +19,7 @@ app.use(requestLogger);
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors);
 
 app.post("/signin", loginValidator, login);
 app.post("/signup", userValidator, createUser);
