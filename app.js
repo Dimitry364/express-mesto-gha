@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const { errors } = require("celebrate");
-const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
@@ -17,7 +16,6 @@ const app = express();
 
 app.use(requestLogger);
 
-app.use(cookieParser());
 app.use(express.json());
 app.use(cors);
 

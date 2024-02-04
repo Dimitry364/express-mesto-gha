@@ -25,13 +25,13 @@ const login = (req, res, next) => {
         }
       );
 
-      res
-        .cookie("jwt", token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-          sameSite: true,
-        })
-        .send({ data: user });
+      res.send({ token });
+      // res
+      //   .cookie("jwt", token, {
+      //     maxAge: 3600000 * 24 * 7,
+      //     httpOnly: true,
+      //   })
+      //   .send({ data: user });
     })
     .catch((err) => {
       next(new AuthError(err.message));
