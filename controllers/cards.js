@@ -18,7 +18,7 @@ const createCard = (req, res, next) => {
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(Created).send({ data: card }))
+    .then((card) => res.status(Created).send(card))
     .catch((err) => {
       if (err instanceof ValidationError)
         next(
@@ -44,7 +44,7 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       return card.deleteOne();
     })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof CastError)
         next(
@@ -66,7 +66,7 @@ const likeCard = (req, res, next) => {
     { new: true }
   )
     .orFail(() => new NotFoundError("Карточка не найдена"))
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof CastError)
         next(
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .orFail(() => new NotFoundError("Карточка не найдена"))
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof CastError)
         next(

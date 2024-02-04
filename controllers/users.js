@@ -26,12 +26,6 @@ const login = (req, res, next) => {
       );
 
       res.send({ token });
-      // res
-      //   .cookie("jwt", token, {
-      //     maxAge: 3600000 * 24 * 7,
-      //     httpOnly: true,
-      //   })
-      //   .send({ data: user });
     })
     .catch((err) => {
       next(new AuthError(err.message));
@@ -40,7 +34,7 @@ const login = (req, res, next) => {
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
@@ -54,7 +48,7 @@ const getUser = (req, res, next) => {
 
   User.findById(userId)
     .orFail(() => new NotFoundError("Пользователь не найден"))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err instanceof CastError)
         next(new BadRequestError("Переданы некорректные данные"));
@@ -67,7 +61,7 @@ const createUser = (req, res, next) => {
 
   bcrypt.hash(password, 10).then((hash) =>
     User.create({ name, about, avatar, email, password: hash })
-      .then((user) => res.status(Created).send({ data: user }))
+      .then((user) => res.status(Created).send(user))
       .catch((err) => {
         if (err instanceof ValidationError)
           next(
@@ -101,7 +95,7 @@ function updateUserDecorator(update) {
       runValidators: true,
     })
       .orFail(() => new NotFoundError("Пользователь не найден"))
-      .then((user) => res.send({ data: user }))
+      .then((user) => res.send(user))
       .catch((err) => {
         if (err instanceof ValidationError)
           next(
